@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useGoogleMaps } from "@/lib/maps";
 import { Trip } from "@/lib/firestore";
+import { X, Check } from "lucide-react";
 
 const GoogleMap = dynamic(() => import("@react-google-maps/api").then(m => ({ default: m.GoogleMap })), { ssr: false });
 const Marker = dynamic(() => import("@react-google-maps/api").then(m => ({ default: m.Marker })), { ssr: false });
@@ -15,6 +16,15 @@ type Props = {
 };
 
 export default function TripCreationModal({ open, onClose, onCreate, ownerUid }: Props) {
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    if (open) {
+      window.addEventListener("keydown", onKey);
+    }
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
   const { isLoaded } = useGoogleMaps();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -26,19 +36,19 @@ export default function TripCreationModal({ open, onClose, onCreate, ownerUid }:
   const center = pin || { lat: 37.7749, lng: -122.4194 };
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
-      <div className="bg-white w-full max-w-2xl rounded-lg p-4 space-y-3">
-        <h2 className="text-xl font-semibold">Create Trip</h2>
-        <div className="grid grid-cols-1 gap-2">
-          <input className="border p-2 rounded" placeholder="Trip name" value={name} onChange={(e) => setName(e.target.value)} />
-          <div className="grid grid-cols-2 gap-2">
-            <input className="border p-2 rounded" type="date" value={dates.start} onChange={(e) => setDates({ ...dates, start: e.target.value })} />
-            <input className="border p-2 rounded" type="date" value={dates.end} onChange={(e) => setDates({ ...dates, end: e.target.value })} />
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="createTripTitle">
+      <div className="card w-full max-w-2xl p-6 space-y-4">
+        <h2 id="createTripTitle" className="text-xl font-semibold">Create Trip</h2>
+        <div className="grid grid-cols-1 gap-3">
+          <input className="input" placeholder="Trip name" value={name} onChange={(e) => setName(e.target.value)} />
+          <div className="grid grid-cols-2 gap-3">
+            <input className="input" type="date" value={dates.start} onChange={(e) => setDates({ ...dates, start: e.target.value })} />
+            <input className="input" type="date" value={dates.end} onChange={(e) => setDates({ ...dates, end: e.target.value })} />
           </div>
-          <input className="border p-2 rounded" placeholder="Location address" value={address} onChange={(e) => setAddress(e.target.value)} />
+          <input className="input" placeholder="Location address" value={address} onChange={(e) => setAddress(e.target.value)} />
         </div>
 
-        <div className="h-64 border rounded overflow-hidden">
+        <div className="h-64 border rounded-xl overflow-hidden bg-white/60">
           {isLoaded ? (
             <GoogleMap
               mapContainerStyle={{ width: "100%", height: "100%" }}
@@ -57,9 +67,12 @@ export default function TripCreationModal({ open, onClose, onCreate, ownerUid }:
         </div>
 
         <div className="flex gap-2 justify-end">
-          <button className="px-3 py-2 rounded border" onClick={onClose}>Cancel</button>
+          <button className="btn btn-outline" onClick={onClose}>
+            <X size={16} />
+            Cancel
+          </button>
           <button
-            className="px-3 py-2 rounded bg-blue-600 text-white"
+            className="btn btn-primary"
             onClick={() => {
               if (!name || !dates.start || !dates.end) return;
               onCreate({
@@ -73,6 +86,7 @@ export default function TripCreationModal({ open, onClose, onCreate, ownerUid }:
               onClose();
             }}
           >
+            <Check size={16} />
             Create
           </button>
         </div>

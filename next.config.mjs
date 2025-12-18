@@ -8,6 +8,15 @@ const nextConfig = {
       "firebase/firestore",
       "firebase/storage"
     ]
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+        pathname: "/v*/b/**",
+      }
+    ]
   }
 };
 

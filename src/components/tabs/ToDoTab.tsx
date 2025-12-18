@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { addTask, subscribeTasks, subscribeTaskChecks, toggleTaskCheck, Task } from "@/lib/firestore";
 import { auth } from "@/lib/firebase";
+import { Plus } from "lucide-react";
 
 export default function ToDoTab({ tripId, members }: { tripId: string; members: { uid: string; displayName?: string }[] }) {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -23,15 +24,16 @@ export default function ToDoTab({ tripId, members }: { tripId: string; members: 
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
-        <input className="border p-2 rounded flex-1" placeholder="Add to-do" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+        <input className="input flex-1" placeholder="Add to-do" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
         <button
-          className="px-3 py-2 rounded bg-blue-600 text-white"
+          className="btn btn-primary"
           onClick={() => {
             if (!newTitle) return;
             addTask(tripId, { title: newTitle, createdBy: auth.currentUser?.uid || "" });
             setNewTitle("");
           }}
         >
+          <Plus size={16} />
           Add
         </button>
       </div>
@@ -42,7 +44,7 @@ export default function ToDoTab({ tripId, members }: { tripId: string; members: 
           const outstanding = allMembers.filter((uid) => !checked.includes(uid));
           const myChecked = checked.includes(auth.currentUser?.uid || "");
           return (
-            <div key={t.id} className="p-2 border rounded">
+            <div key={t.id} className="card p-3">
               <div className="flex items-center gap-2">
                 <input type="checkbox" checked={myChecked} onChange={(e) => toggleTaskCheck(tripId, t.id!, auth.currentUser?.uid || "", e.target.checked)} />
                 <div className="font-medium flex-1">{t.title}</div>

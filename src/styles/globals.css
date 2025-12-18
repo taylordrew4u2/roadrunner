@@ -5,3 +5,59 @@
 html, body, #__next {
   height: 100%;
 }
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-100;
+    background-image: theme('backgroundImage.radial-soft');
+    background-attachment: fixed;
+  }
+  ::selection {
+    background: rgba(90, 150, 255, 0.25);
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white/80 backdrop-blur border border-gray-200 rounded-xl shadow-card animate-fadeIn dark:bg-gray-800/70 dark:border-gray-700;
+  }
+  .input {
+    @apply border border-gray-300 focus:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-200 rounded-md px-3 py-2 transition outline-none bg-white/80 dark:bg-gray-800/70 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 font-medium transition shadow-soft disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-400 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700;
+  }
+  .btn-outline {
+    @apply btn border border-gray-300 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700;
+  }
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full border px-4 py-2 transition dark:border-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-400 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900;
+  }
+  .pill-active {
+    @apply pill bg-brand-600 text-white border-brand-600 shadow-soft;
+  }
+}
+
+/* Subtle custom scrollbar for desktop */
+@media (hover: hover) and (pointer: fine) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+  ::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+}

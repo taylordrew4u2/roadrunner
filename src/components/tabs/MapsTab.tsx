@@ -17,7 +17,7 @@ export default function MapsTab({ events }: Props) {
   const center = pins[0]?.location || { lat: 37.7749, lng: -122.4194 };
 
   return (
-    <div className="h-[60vh] border rounded overflow-hidden">
+    <div className="h-[60vh] card overflow-hidden">
       {isLoaded ? (
         <GoogleMap mapContainerStyle={{ width: "100%", height: "100%" }} center={center as any} zoom={pins.length ? 12 : 3}>
           {pins.map((ev) => (

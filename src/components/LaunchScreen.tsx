@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 
 export default function LaunchScreen() {
   return (
-    <div className="flex h-full items-center justify-center bg-white">
+    <div className="flex h-full items-center justify-center">
       <motion.div
-        className="w-20 h-20 rounded-full bg-blue-500"
-        animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-        transition={{ repeat: Infinity, duration: 1.6 }}
+        className="w-24 h-24 rounded-full bg-gradient-to-tr from-brand-600 to-emerald-500 shadow-soft animate-pulseGlow"
+        animate={{ scale: [1, 1.08, 1], rotate: [0, 120, 240, 360] }}
+        transition={{ repeat: Infinity, duration: 2.4 }}
       />
     </div>
   );

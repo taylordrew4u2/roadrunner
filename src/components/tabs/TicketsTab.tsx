@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
+import { Upload } from "lucide-react";
+import Image from "next/image";
 
 type Ticket = { url: string; name: string };
 
@@ -29,17 +31,22 @@ export default function TicketsTab({ tripId }: { tripId: string }) {
 
   return (
     <div className="space-y-3">
-      <div>
-        <input type="file" accept="image/*,application/pdf" onChange={(e) => e.target.files && onUpload(e.target.files[0])} />
+      <div className="card p-3 flex items-center justify-between">
+        <label htmlFor="ticketUpload" className="btn btn-outline cursor-pointer">
+          <Upload size={16} />
+          Upload Ticket
+        </label>
+        <input id="ticketUpload" className="sr-only" type="file" accept="image/*,application/pdf" onChange={(e) => e.target.files && onUpload(e.target.files[0])} />
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {tickets.map((t) => (
-          <a key={t.url} href={t.url} target="_blank" className="border rounded overflow-hidden">
+          <a key={t.url} href={t.url} target="_blank" className="card overflow-hidden">
             {t.name.toLowerCase().endsWith(".pdf") ? (
               <div className="p-4">PDF: {t.name}</div>
             ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={t.url} alt={t.name} className="w-full h-40 object-cover" />
+              <div className="relative w-full h-40">
+                <Image src={t.url} alt={t.name} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
+              </div>
             )}
           </a>
         ))}

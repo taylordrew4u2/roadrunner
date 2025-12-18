@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { addEvent, ItineraryEvent, subscribeEvents } from "@/lib/firestore";
 import { auth } from "@/lib/firebase";
 import dynamic from "next/dynamic";
+import { MapPin } from "lucide-react";
 
 const LocationPickerModal = dynamic(() => import("@/components/LocationPickerModal"), { ssr: false });
 
@@ -42,9 +43,9 @@ export default function ItineraryTab({ tripId, startDate, endDate }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {days.map((d) => (
-          <button key={d} className={`p-3 border rounded ${selectedDay === d ? "bg-blue-50 border-blue-400" : ""}`} onClick={() => setSelectedDay(d)}>
+          <button key={d} className={`card p-3 text-left ${selectedDay === d ? "ring-2 ring-brand-300" : ""}`} onClick={() => setSelectedDay(d)}>
             <div className="font-medium">{new Date(d).toDateString()}</div>
             <div className="text-sm text-gray-500">{eventsByDay[d]?.length || 0} events</div>
           </button>
@@ -52,13 +53,13 @@ export default function ItineraryTab({ tripId, startDate, endDate }: Props) {
       </div>
 
       {selectedDay && (
-        <div className="border rounded p-3">
+        <div className="card p-4">
           <h3 className="font-semibold">Timeline for {new Date(selectedDay).toDateString()}</h3>
-          <div className="space-y-2 mt-2">
+          <div className="space-y-2 mt-3">
             {(eventsByDay[selectedDay] || []).map((ev) => (
               <div key={ev.id} className="flex items-start gap-3">
-                <div className="w-16 text-right font-mono">{ev.time}</div>
-                <div>
+                <div className="w-16 text-right font-mono text-sm text-gray-600">{ev.time}</div>
+                <div className="flex-1 p-3 bg-white/70 rounded border">
                   <div className="font-medium">{ev.title}</div>
                   {ev.location?.address && <div className="text-sm text-gray-600">{ev.location.address}</div>}
                   {ev.notes && <div className="text-sm text-gray-600">{ev.notes}</div>}
@@ -68,17 +69,18 @@ export default function ItineraryTab({ tripId, startDate, endDate }: Props) {
           </div>
 
           <div className="mt-4 border-t pt-3">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-              <input className="border p-2 rounded" placeholder="Event title" value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} />
-              <input className="border p-2 rounded" type="time" value={newEvent.time} onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })} />
-              <input className="border p-2 rounded" placeholder="Notes" value={newEvent.notes} onChange={(e) => setNewEvent({ ...newEvent, notes: e.target.value })} />
-              <button className="px-3 py-2 rounded border" onClick={() => setShowLocation(true)}>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <input className="input" placeholder="Event title" value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} />
+              <input className="input" type="time" value={newEvent.time} onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })} />
+              <input className="input" placeholder="Notes" value={newEvent.notes} onChange={(e) => setNewEvent({ ...newEvent, notes: e.target.value })} />
+              <button className="btn btn-outline" onClick={() => setShowLocation(true)}>
+                <MapPin size={16} />
                 {newEvent.location ? "Change Location" : "Pick Location"}
               </button>
             </div>
             <div className="mt-2 flex justify-end">
               <button
-                className="px-3 py-2 rounded bg-blue-600 text-white"
+                className="btn btn-primary"
                 onClick={async () => {
                   if (!selectedDay || !newEvent.title) return;
                   await addEvent(tripId, {
@@ -100,7 +102,7 @@ export default function ItineraryTab({ tripId, startDate, endDate }: Props) {
               <LocationPickerModal
                 open={showLocation}
                 onClose={() => setShowLocation(false)}
-                onSelect={(loc) => setNewEvent((e) => ({ ...e, location: loc }))}
+                onPick={(loc) => setNewEvent((e) => ({ ...e, location: loc }))}
               />
             )}
           </div>

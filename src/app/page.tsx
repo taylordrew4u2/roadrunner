@@ -5,6 +5,8 @@ import TripCreationModal from "@/components/TripCreationModal";
 import { auth, onAuthReady } from "@/lib/firebase";
 import { createTrip, subscribeTrips, Trip } from "@/lib/firestore";
 import Link from "next/link";
+import ThemeToggle from "@/components/ThemeToggle";
+import { Plus } from "lucide-react";
 import { checkAppPassword } from "@/lib/auth";
 
 export default function HomePage() {
@@ -29,12 +31,12 @@ export default function HomePage() {
 
   if (!gateOpen) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="bg-white border rounded p-4 w-80 space-y-2">
+      <div className="h-screen flex items-center justify-center p-4">
+        <div className="card w-80 space-y-3 p-4">
           <h1 className="text-lg font-semibold">Enter App Password</h1>
-          <input className="border p-2 rounded w-full" type="password" value={gateInput} onChange={(e) => setGateInput(e.target.value)} />
+          <input className="input w-full" type="password" value={gateInput} onChange={(e) => setGateInput(e.target.value)} />
           <button
-            className="px-3 py-2 rounded bg-blue-600 text-white w-full"
+            className="btn btn-primary w-full"
             onClick={async () => {
               if (await checkAppPassword(gateInput)) setGateOpen(true);
               else alert("Incorrect password");
@@ -48,19 +50,23 @@ export default function HomePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Your Trips</h1>
         <div className="flex items-center gap-2">
           <div className="text-sm text-gray-600">User: {auth.currentUser?.uid}</div>
-          <button className="px-3 py-2 rounded bg-blue-600 text-white" onClick={() => setShowCreate(true)}>Add Trip</button>
+          <ThemeToggle />
+          <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
+            <Plus size={16} />
+            Add Trip
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {trips.map((t) => (
           <Link key={t.id} href={`/trip/${t.id}`}
-            className="block p-3 border rounded bg-white hover:bg-gray-50">
+            className="block card p-4 hover:shadow-lg hover:-translate-y-0.5 transition">
             <div className="font-semibold">{t.name}</div>
             {t.location?.address && <div className="text-sm text-gray-600">{t.location.address}</div>}
             <div className="text-sm text-gray-600">{t.startDate} → {t.endDate}</div>

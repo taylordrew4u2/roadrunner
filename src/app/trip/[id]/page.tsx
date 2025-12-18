@@ -9,6 +9,8 @@ import TicketsTab from "@/components/tabs/TicketsTab";
 import NotesTab from "@/components/tabs/NotesTab";
 import ToDoTab from "@/components/tabs/ToDoTab";
 import MembersTab from "@/components/tabs/MembersTab";
+import ThemeToggle from "@/components/ThemeToggle";
+import { CalendarDays, MapPin, Ticket, StickyNote, CheckSquare, Users, Link as LinkIcon } from "lucide-react";
 
 export default function TripPage() {
   const params = useParams<{ id: string }>();
@@ -25,13 +27,13 @@ export default function TripPage() {
     return () => { u1(); u2(); u3(); };
   }, [tripId]);
 
-  const tabs: { key: typeof tab; label: string }[] = [
-    { key: "itinerary", label: "Itinerary" },
-    { key: "maps", label: "Maps" },
-    { key: "tickets", label: "Tickets" },
-    { key: "notes", label: "Notes" },
-    { key: "todo", label: "To-Do" },
-    { key: "members", label: "Members" },
+  const tabs: { key: typeof tab; label: string; icon: JSX.Element }[] = [
+    { key: "itinerary", label: "Itinerary", icon: <CalendarDays size={16} /> },
+    { key: "maps", label: "Maps", icon: <MapPin size={16} /> },
+    { key: "tickets", label: "Tickets", icon: <Ticket size={16} /> },
+    { key: "notes", label: "Notes", icon: <StickyNote size={16} /> },
+    { key: "todo", label: "To-Do", icon: <CheckSquare size={16} /> },
+    { key: "members", label: "Members", icon: <Users size={16} /> },
   ];
 
   if (!trip) return <div className="p-4">Loading trip...</div>;
@@ -40,21 +42,26 @@ export default function TripPage() {
     <div className="max-w-5xl mx-auto p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{trip.name}</h1>
-        <button
-          className="px-3 py-2 rounded bg-green-600 text-white"
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            className="btn bg-emerald-600 text-white hover:bg-emerald-700"
           onClick={async () => {
             const token = await createInvite(tripId);
             const link = `${window.location.origin}/invite/${token}`;
             await navigator.clipboard.writeText(link);
             alert("Invite link copied!");
           }}
-        >
-          🔗 Invite
-        </button>
+          >
+            <LinkIcon size={16} />
+            Invite
+          </button>
+        </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {tabs.map((t) => (
-          <button key={t.key} className={`px-3 py-2 rounded border ${tab === t.key ? "bg-blue-600 text-white border-blue-600" : "bg-white"}`} onClick={() => setTab(t.key)}>
+          <button key={t.key} className={tab === t.key ? "pill-active" : "pill bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700"} onClick={() => setTab(t.key)}>
+            {t.icon}
             {t.label}
           </button>
         ))}
