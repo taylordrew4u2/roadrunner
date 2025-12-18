@@ -71,14 +71,6 @@ export function subscribeTrip(tripId: string, cb: (trip: Trip | null) => void) {
   });
 }
 
-export function subscribeTrip(tripId: string, cb: (trip: Trip | null) => void) {
-  const ref = doc(db, "trips", tripId);
-  return onSnapshot(ref, (snap) => {
-    if (!snap.exists()) return cb(null);
-    cb({ id: snap.id, ...(snap.data() as Trip) });
-  });
-}
-
 export function subscribeTrips(uid: string, cb: (docs: Trip[]) => void) {
   const col = collection(db, "trips");
   const q = query(col, where("ownerUid", "==", uid));
