@@ -1,8 +1,11 @@
 "use client";
 import { useState } from "react";
-import { GoogleMap, Marker } from "@react-google-maps/api";
+import dynamic from "next/dynamic";
 import { useGoogleMaps } from "@/lib/maps";
 import { Trip } from "@/lib/firestore";
+
+const GoogleMap = dynamic(() => import("@react-google-maps/api").then(m => ({ default: m.GoogleMap })), { ssr: false });
+const Marker = dynamic(() => import("@react-google-maps/api").then(m => ({ default: m.Marker })), { ssr: false });
 
 type Props = {
   open: boolean;

@@ -1,8 +1,12 @@
 "use client";
-import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
+import dynamic from "next/dynamic";
 import { useGoogleMaps } from "@/lib/maps";
 import { ItineraryEvent } from "@/lib/firestore";
 import { useMemo, useState } from "react";
+
+const GoogleMap = dynamic(() => import("@react-google-maps/api").then(m => ({ default: m.GoogleMap })), { ssr: false });
+const Marker = dynamic(() => import("@react-google-maps/api").then(m => ({ default: m.Marker })), { ssr: false });
+const InfoWindow = dynamic(() => import("@react-google-maps/api").then(m => ({ default: m.InfoWindow })), { ssr: false });
 
 type Props = { events: ItineraryEvent[] };
 
