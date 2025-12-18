@@ -153,20 +153,6 @@ export function subscribeNotes(tripId: string, cb: (content: string) => void) {
   });
 }
 
-export async function createInvite(tripId: string): Promise<string> {
-  const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  const ref = doc(db, "invites", token);
-  await setDoc(ref, { tripId, createdAt: serverTimestamp() });
-  return token;
-}
-
-export async function getInvite(token: string): Promise<string | null> {
-  const ref = doc(db, "invites", token);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) return null;
-  return snap.data().tripId;
-}
-
 // Invites
 export type Invite = {
   token: string;
@@ -180,6 +166,13 @@ export async function createInvite(tripId: string, createdBy: string) {
   const ref = doc(db, "invites", token);
   await setDoc(ref, { token, tripId, createdBy, createdAt: serverTimestamp() });
   return token;
+}
+
+export async function getInvite(token: string): Promise<string | null> {
+  const ref = doc(db, "invites", token);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  return snap.data().tripId;
 }
 
 export function subscribeInvite(token: string, cb: (invite: Invite | null) => void) {
