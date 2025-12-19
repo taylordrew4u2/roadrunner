@@ -13,6 +13,13 @@
   --color-brand-700: #285bd6;
   --color-brand-800: #2149a8;
   --color-brand-900: #1e3c86;
+
+  --color-base: #0f172a;
+  --color-base-light: #1e293b;
+  --color-accent: #3b82f6;
+  --color-accent-light: #60a5fa;
+  --color-text: #f1f5f9;
+  --color-text-muted: #cbd5e1;
   
   --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.2);
   --shadow-card: 0 8px 24px rgba(0,0,0,0.08);
@@ -33,6 +40,14 @@
 
 html, body, #__next {
   height: 100%;
+}
+
+* {
+  @apply m-0 p-0 box-border;
+}
+
+html, body {
+  @apply min-h-screen bg-base text-text;
 }
 
 @layer base {
@@ -74,6 +89,12 @@ html, body, #__next {
   .btn-primary {
     @apply btn bg-gradient-to-r from-brand-600 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5;
   }
+  .btn-secondary {
+    @apply btn bg-base-light hover:bg-base text-text border border-accent/20;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent hover:bg-base-light text-text;
+  }
   .btn-outline {
     @apply btn border border-gray-200 bg-white/70 hover:bg-white dark:bg-white/10 dark:border-white/10 dark:hover:bg-white/15;
   }
@@ -86,6 +107,48 @@ html, body, #__next {
   .badge-soft {
     @apply inline-flex items-center gap-1 rounded-full bg-brand-50 text-brand-700 px-3 py-1 text-xs font-semibold dark:bg-brand-900/60 dark:text-brand-100 border border-brand-100/60 dark:border-brand-700/60;
   }
+  .badge {
+    @apply inline-block px-3 py-1 rounded-full text-sm font-medium bg-accent/10 text-accent border border-accent/20;
+  }
+  .timeline-item {
+    @apply relative pl-8 py-4 before:absolute before:left-0 before:top-2 before:w-4 before:h-4 before:bg-gradient-to-br before:from-accent before:to-accent-light before:rounded-full before:shadow-md;
+  }
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-xl;
+  }
+  .gradient-primary {
+    @apply bg-gradient-to-br from-accent to-accent-light;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    @apply opacity-0;
+  }
+  to {
+    @apply opacity-100;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    @apply translate-y-4 opacity-0;
+  }
+  to {
+    @apply translate-y-0 opacity-100;
+  }
+}
+
+.animate-fade-in {
+  @apply animate-in fade-in duration-500;
+}
+
+.animate-slide-up {
+  @apply animate-in slide-in-from-bottom duration-500;
 }
 
 /* Subtle custom scrollbar for desktop */
