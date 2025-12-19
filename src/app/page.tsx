@@ -18,7 +18,10 @@ export default function HomePage() {
   const [gateInput, setGateInput] = useState("");
 
   useEffect(() => {
-    onAuthReady().then((u) => setUid(u)).finally(() => setReady(true));
+    onAuthReady().then((u) => {
+      setUid(u);
+      setReady(true);
+    }).catch(() => setReady(true));
   }, []);
 
   useEffect(() => {
@@ -39,7 +42,13 @@ export default function HomePage() {
             <p className="text-sm text-gray-600 dark:text-gray-300">Protected access keeps your shared itineraries private.</p>
           </div>
           <div className="space-y-3">
-            <input className="input w-full" placeholder="App password" type="password" value={gateInput} onChange={(e) => setGateInput(e.target.value)} />
+            <input
+              className="input w-full"
+              placeholder="App password"
+              type="password"
+              value={gateInput}
+              onChange={(e) => setGateInput(e.target.value)}
+            />
             <button
               className="btn btn-primary w-full"
               onClick={async () => {
@@ -62,7 +71,9 @@ export default function HomePage() {
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-[0.3em] text-brand-600">Roadrunner</p>
             <h1 className="text-3xl font-bold leading-tight">Plan together, travel beautifully.</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-300 max-w-2xl">Create trips, sync timelines, and keep everyone aligned with maps, tickets, notes, and tasks in one elegant workspace.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 max-w-2xl">
+              Create trips, sync timelines, and keep everyone aligned with maps, tickets, notes, and tasks in one elegant workspace.
+            </p>
             <div className="flex flex-wrap gap-2">
               <span className="badge-soft">Realtime sync</span>
               <span className="badge-soft">Google Maps</span>
@@ -72,7 +83,9 @@ export default function HomePage() {
           <div className="flex flex-col items-end gap-3">
             <div className="text-xs text-gray-600 dark:text-gray-300">Signed in as</div>
             <div className="flex items-center gap-2">
-              <div className="px-3 py-1 rounded-full bg-white/70 dark:bg-white/10 text-sm border border-white/50 dark:border-white/10">{auth.currentUser?.uid}</div>
+              <div className="px-3 py-1 rounded-full bg-white/70 dark:bg-white/10 text-sm border border-white/50 dark:border-white/10">
+                {auth.currentUser?.uid}
+              </div>
               <ThemeToggle />
             </div>
             <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
@@ -96,7 +109,9 @@ export default function HomePage() {
                 <h3 className="text-lg font-semibold">{t.name}</h3>
                 <span className="badge-soft">{t.startDate} → {t.endDate}</span>
               </div>
-              {t.location?.address && <div className="text-sm text-gray-600 dark:text-gray-300">{t.location.address}</div>}
+              {t.location?.address && (
+                <div className="text-sm text-gray-600 dark:text-gray-300">{t.location.address}</div>
+              )}
             </div>
           </Link>
         ))}

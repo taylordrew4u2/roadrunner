@@ -12,8 +12,10 @@ function getInitialTheme(): "light" | "dark" {
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const initial = getInitialTheme();
     setTheme(initial);
     if (initial === "dark") {
@@ -29,6 +31,8 @@ export default function ThemeToggle() {
     localStorage.setItem("theme", next);
     document.documentElement.classList.toggle("dark", next === "dark");
   }
+
+  if (!mounted) return null;
 
   return (
     <button aria-label="Toggle theme" title="Toggle theme" onClick={toggle} className="btn btn-outline">

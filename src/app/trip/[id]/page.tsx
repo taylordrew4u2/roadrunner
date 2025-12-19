@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, ReactNode } from "react";
 import { useParams } from "next/navigation";
 import { ItineraryEvent, subscribeEvents, subscribeTripMembers, TripMember, subscribeTrip, Trip, createInvite } from "@/lib/firestore";
 import { auth } from "@/lib/firebase";
@@ -27,7 +27,7 @@ export default function TripPage() {
     return () => { u1(); u2(); u3(); };
   }, [tripId]);
 
-  const tabs: { key: typeof tab; label: string; icon: JSX.Element }[] = [
+  const tabs: { key: typeof tab; label: string; icon: ReactNode }[] = [
     { key: "itinerary", label: "Itinerary", icon: <CalendarDays size={16} /> },
     { key: "maps", label: "Maps", icon: <MapPin size={16} /> },
     { key: "tickets", label: "Tickets", icon: <Ticket size={16} /> },
@@ -59,7 +59,11 @@ export default function TripPage() {
             <button
               className="btn btn-primary"
               onClick={async () => {
-                const token = await createInvite(tripId);
+                if (!auth.currentUser?.uid) {
+                  alert("Not authenticated");
+                  return;
+                }
+                const token = await createInvite(tripId, auth.currentUser.uid);
                 const link = `${window.location.origin}/invite/${token}`;
                 await navigator.clipboard.writeText(link);
                 alert("Invite link copied!");

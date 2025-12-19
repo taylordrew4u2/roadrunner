@@ -49,7 +49,7 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_maps_key
 ## 🏗️ Tech Stack
 
 | Layer | Technology |
-|-------|------------|
+| ------- | ------------ |
 | Framework | Next.js 16 (App Router, Turbopack) |
 | UI | React 19, Tailwind CSS 4 |
 | Backend | Firebase (Auth, Firestore, Storage) |
@@ -59,7 +59,7 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_maps_key
 
 ## 📁 Project Structure
 
-```
+```txt
 src/
 ├── app/                    # Next.js App Router pages
 │   ├── page.tsx           # Home (trip list)
@@ -80,12 +80,14 @@ src/
 ## 🌐 Deployment
 
 ### Vercel (Recommended)
+
 ```bash
 # Connect repo and deploy
 vercel
 ```
 
 ### Cloudflare Pages
+
 ```bash
 npm run build
 npx wrangler pages deploy .next
