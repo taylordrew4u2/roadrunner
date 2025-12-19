@@ -11,36 +11,51 @@ html, body, #__next {
     scroll-behavior: smooth;
   }
   body {
-    @apply font-sans text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-100;
-    background-image: theme('backgroundImage.radial-soft');
+    @apply font-sans text-gray-900 dark:text-gray-100;
+    background: radial-gradient(1200px 700px at 15% 10%, rgba(90,150,255,0.18), transparent),
+                radial-gradient(900px 600px at 85% 0%, rgba(45,212,191,0.16), transparent),
+                linear-gradient(120deg, rgba(14,30,65,0.08), rgba(10,20,40,0.02));
     background-attachment: fixed;
   }
   ::selection {
     background: rgba(90, 150, 255, 0.25);
   }
+  .bg-base {
+    background: radial-gradient(1400px 900px at 10% 20%, rgba(90,150,255,0.16), transparent),
+                radial-gradient(1200px 800px at 90% 10%, rgba(45,212,191,0.12), transparent),
+                linear-gradient(145deg, #f8fbff 0%, #f4f7ff 40%, #f7fdfc 100%);
+  }
+  .dark .bg-base {
+    background: radial-gradient(1400px 900px at 12% 20%, rgba(90,150,255,0.16), transparent),
+                radial-gradient(1200px 800px at 88% 12%, rgba(59,130,246,0.18), transparent),
+                linear-gradient(160deg, #0b1324 0%, #0a0f1d 40%, #050913 100%);
+  }
 }
 
 @layer components {
   .card {
-    @apply bg-white/80 backdrop-blur border border-gray-200 rounded-xl shadow-card animate-fadeIn dark:bg-gray-800/70 dark:border-gray-700;
+    @apply bg-white/80 backdrop-blur-xl border border-white/60 rounded-2xl shadow-card animate-fadeIn dark:bg-white/5 dark:border-white/10;
   }
   .input {
-    @apply border border-gray-300 focus:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-200 rounded-md px-3 py-2 transition outline-none bg-white/80 dark:bg-gray-800/70 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400;
+    @apply border border-gray-200 focus:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-200 rounded-lg px-3 py-2 transition outline-none bg-white/80 dark:bg-gray-900/60 dark:border-white/10 placeholder-gray-500 dark:placeholder-gray-400 shadow-inner;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 font-medium transition shadow-soft disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-400 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 font-semibold transition shadow-soft disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-400 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900 backdrop-blur;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700;
+    @apply btn bg-gradient-to-r from-brand-600 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5;
   }
   .btn-outline {
-    @apply btn border border-gray-300 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700;
+    @apply btn border border-gray-200 bg-white/70 hover:bg-white dark:bg-white/10 dark:border-white/10 dark:hover:bg-white/15;
   }
   .pill {
-    @apply inline-flex items-center gap-2 rounded-full border px-4 py-2 transition dark:border-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-400 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900;
+    @apply inline-flex items-center gap-2 rounded-full border border-white/60 px-4 py-2 transition bg-white/70 dark:bg-white/10 dark:border-white/10 shadow-inner hover:-translate-y-0.5 hover:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-400 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900;
   }
   .pill-active {
-    @apply pill bg-brand-600 text-white border-brand-600 shadow-soft;
+    @apply pill bg-gradient-to-r from-brand-600 to-emerald-500 text-white border-transparent shadow-soft;
+  }
+  .badge-soft {
+    @apply inline-flex items-center gap-1 rounded-full bg-brand-50 text-brand-700 px-3 py-1 text-xs font-semibold dark:bg-brand-900/60 dark:text-brand-100 border border-brand-100/60 dark:border-brand-700/60;
   }
 }
 

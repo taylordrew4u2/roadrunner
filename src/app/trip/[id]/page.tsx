@@ -39,28 +39,41 @@ export default function TripPage() {
   if (!trip) return <div className="p-4">Loading trip...</div>;
 
   return (
-    <div className="max-w-5xl mx-auto p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{trip.name}</h1>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <button
-            className="btn bg-emerald-600 text-white hover:bg-emerald-700"
-          onClick={async () => {
-            const token = await createInvite(tripId);
-            const link = `${window.location.origin}/invite/${token}`;
-            await navigator.clipboard.writeText(link);
-            alert("Invite link copied!");
-          }}
-          >
-            <LinkIcon size={16} />
-            Invite
-          </button>
+    <div className="max-w-5xl mx-auto p-6 space-y-6">
+      <div className="card p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-50/70 via-white/40 to-emerald-50/60 dark:from-brand-900/20 dark:via-white/5 dark:to-emerald-900/10" />
+        <div className="relative flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="badge-soft">Trip</span>
+              {trip.location?.address && <span className="badge-soft inline-flex items-center gap-2"><MapPin size={14} /> {trip.location.address}</span>}
+            </div>
+            <h1 className="text-3xl font-bold leading-tight">{trip.name}</h1>
+            <div className="text-sm text-gray-700 dark:text-gray-200 flex flex-wrap gap-2 items-center">
+              <span className="badge-soft">{trip.startDate} → {trip.endDate}</span>
+              <span className="badge-soft">Members: {members.length}</span>
+            </div>
+          </div>
+          <div className="flex flex-col items-end gap-3">
+            <ThemeToggle />
+            <button
+              className="btn btn-primary"
+              onClick={async () => {
+                const token = await createInvite(tripId);
+                const link = `${window.location.origin}/invite/${token}`;
+                await navigator.clipboard.writeText(link);
+                alert("Invite link copied!");
+              }}
+            >
+              <LinkIcon size={16} />
+              Share invite
+            </button>
+          </div>
         </div>
       </div>
       <div className="flex gap-2 flex-wrap">
         {tabs.map((t) => (
-          <button key={t.key} className={tab === t.key ? "pill-active" : "pill bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700"} onClick={() => setTab(t.key)}>
+          <button key={t.key} className={tab === t.key ? "pill-active" : "pill"} onClick={() => setTab(t.key)}>
             {t.icon}
             {t.label}
           </button>

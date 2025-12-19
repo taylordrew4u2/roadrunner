@@ -45,24 +45,31 @@ export default function ItineraryTab({ tripId, startDate, endDate }: Props) {
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {days.map((d) => (
-          <button key={d} className={`card p-3 text-left ${selectedDay === d ? "ring-2 ring-brand-300" : ""}`} onClick={() => setSelectedDay(d)}>
+          <button
+            key={d}
+            className={`card p-3 text-left transition hover:-translate-y-0.5 hover:shadow-lg ${selectedDay === d ? "ring-2 ring-brand-300" : ""}`}
+            onClick={() => setSelectedDay(d)}
+          >
+            <div className="font-semibold text-sm text-brand-700 dark:text-brand-200">Day {days.indexOf(d) + 1}</div>
             <div className="font-medium">{new Date(d).toDateString()}</div>
-            <div className="text-sm text-gray-500">{eventsByDay[d]?.length || 0} events</div>
+            <div className="text-xs text-gray-500">{eventsByDay[d]?.length || 0} events</div>
           </button>
         ))}
       </div>
 
       {selectedDay && (
         <div className="card p-4">
-          <h3 className="font-semibold">Timeline for {new Date(selectedDay).toDateString()}</h3>
-          <div className="space-y-2 mt-3">
+          <h3 className="font-semibold text-lg">Timeline for {new Date(selectedDay).toDateString()}</h3>
+          <div className="space-y-4 mt-4 relative">
+            <div className="absolute left-9 top-0 bottom-0 border-l border-dashed border-brand-200 dark:border-brand-800" aria-hidden />
             {(eventsByDay[selectedDay] || []).map((ev) => (
-              <div key={ev.id} className="flex items-start gap-3">
+              <div key={ev.id} className="flex items-start gap-3 relative">
                 <div className="w-16 text-right font-mono text-sm text-gray-600">{ev.time}</div>
-                <div className="flex-1 p-3 bg-white/70 rounded border">
-                  <div className="font-medium">{ev.title}</div>
-                  {ev.location?.address && <div className="text-sm text-gray-600">{ev.location.address}</div>}
-                  {ev.notes && <div className="text-sm text-gray-600">{ev.notes}</div>}
+                <div className="relative flex-1 p-4 bg-white/80 rounded-xl border border-white/60 dark:bg-white/5 dark:border-white/10 shadow-soft">
+                  <div className="absolute -left-10 top-4 w-4 h-4 rounded-full bg-gradient-to-br from-brand-500 to-emerald-500 shadow-soft" aria-hidden />
+                  <div className="font-semibold text-gray-900 dark:text-gray-100">{ev.title}</div>
+                  {ev.location?.address && <div className="text-sm text-gray-600 dark:text-gray-300">{ev.location.address}</div>}
+                  {ev.notes && <div className="text-sm text-gray-600 dark:text-gray-300">{ev.notes}</div>}
                 </div>
               </div>
             ))}

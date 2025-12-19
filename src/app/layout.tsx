@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "Roadrunner",
@@ -8,10 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const inter = Inter({ subsets: ["latin"], display: "swap" });
+  const grotesk = Space_Grotesk({ subsets: ["latin"], display: "swap", weight: ["400", "500", "600", "700"] });
   return (
     <html lang="en">
-      <body className={`${inter.className} min-h-screen`}>{children}</body>
+      <body className={`${grotesk.className} min-h-screen bg-base`}>{children}</body>
     </html>
   );
 }
