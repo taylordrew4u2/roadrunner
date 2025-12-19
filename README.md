@@ -1,23 +1,26 @@
 # Roadrunner 🏃‍♂️
 
-A beautifully designed shared travel itinerary planner for groups.
+A beautifully designed shared travel itinerary planner for groups. Plan together, travel beautifully.
 
-![Next.js](https://img.shields.io/badge/Next.js-16.1.0-black?logo=next.js)
-![React](https://img.shields.io/badge/React-19.2.3-61DAFB?logo=react)
-![Tailwind](https://img.shields.io/badge/Tailwind-4.1-38B2AC?logo=tailwindcss)
-![Firebase](https://img.shields.io/badge/Firebase-Firestore-FFCA28?logo=firebase)
+![Next.js](https://img.shields.io/badge/Next.js-15.5.9-black?logo=next.js)
+![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react)
+![Tailwind](https://img.shields.io/badge/Tailwind-4.1.18-38B2AC?logo=tailwindcss)
+![Firebase](https://img.shields.io/badge/Firebase-12.7.0-FFCA28?logo=firebase)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
 
 ## ✨ Features
 
-- **Collaborative Trips** — Create trips with dates, destinations, and activities
-- **Daily Timelines** — 24-hour timeline per day with event scheduling
-- **Google Maps Integration** — View all pins + get directions
-- **Ticket Storage** — Upload images/PDFs for flights, hotels, reservations
-- **Shared Notes** — Collaborative note-taking for the whole group
+- **Collaborative Trips** — Create trips with dates, destinations, and activities for groups
+- **Daily Timelines** — Beautiful 24-hour timeline per day with intuitive event scheduling
+- **Google Maps Integration** — View all trip pins on an interactive map with directions
+- **Ticket Storage** — Securely upload and organize flight, hotel, and reservation documents
+- **Shared Notes** — Real-time collaborative note-taking with full group access
 - **Smart To-Do Lists** — Tasks require all members to check off before completion
-- **Real-time Sync** — Instant updates across all connected users
-- **Invite System** — Share trips via secure invite links
-- **Dark Mode** — Beautiful glass-morphism UI in light & dark themes
+- **Real-time Sync** — Instant updates across all connected users using Firestore
+- **Secure Invite System** — Share trips via encrypted invite links with group members
+- **Dark Mode** — Beautiful glass-morphism UI with seamless light & dark theme switching
+- **Authentication** — Anonymous yet secure authentication via Firebase
+- **Responsive Design** — Works perfectly on mobile, tablet, and desktop devices
 
 ## 🚀 Quick Start
 
@@ -50,31 +53,43 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_maps_key
 
 | Layer | Technology |
 | ------- | ------------ |
-| Framework | Next.js 16 (App Router, Turbopack) |
-| UI | React 19, Tailwind CSS 4 |
+| Framework | Next.js 15.5 (App Router, RSC, SSR) |
+| UI | React 18, Tailwind CSS 4, Framer Motion |
 | Backend | Firebase (Auth, Firestore, Storage) |
 | Maps | Google Maps JavaScript API |
-| Animations | Framer Motion 12 |
-| Typography | Space Grotesk |
+| Animations | Framer Motion 12, Custom CSS |
+| Typography | Space Grotesk, system fonts |
+| Deployment | Vercel, Cloudflare Pages |
+| Package Manager | npm with workspace optimization |
 
 ## 📁 Project Structure
 
 ```txt
 src/
 ├── app/                    # Next.js App Router pages
-│   ├── page.tsx           # Home (trip list)
-│   ├── trip/[id]/         # Trip detail view
+│   ├── page.tsx           # Home (trip list & auth gate)
+│   ├── trip/[id]/         # Trip detail view with tabs
 │   └── invite/[token]/    # Invite link handler
 ├── components/
-│   ├── tabs/              # Tab components (Itinerary, Maps, etc.)
-│   ├── LaunchScreen.tsx   # Animated splash
-│   └── TripCreationModal.tsx
+│   ├── tabs/              # Tab components
+│   │   ├── ItineraryTab.tsx
+│   │   ├── MapsTab.tsx
+│   │   ├── TicketsTab.tsx
+│   │   ├── NotesTab.tsx
+│   │   ├── ToDoTab.tsx
+│   │   └── MembersTab.tsx
+│   ├── LaunchScreen.tsx   # Animated splash screen
+│   ├── TripCreationModal.tsx
+│   ├── LocationPickerModal.tsx
+│   └── ThemeToggle.tsx
 ├── lib/
 │   ├── firebase.ts        # Firebase init & auth
-│   ├── firestore.ts       # Data layer & subscriptions
-│   └── maps.ts            # Google Maps hook
+│   ├── firestore.ts       # Data layer & real-time subscriptions
+│   ├── maps.ts            # Google Maps integration
+│   ├── auth.ts            # Password gate utilities
+│   └── notifications.ts   # FCM setup
 └── styles/
-    └── globals.css        # Tailwind v4 theme & components
+    └── globals.css        # Tailwind v4 + custom components
 ```
 
 ## 🌐 Deployment
@@ -82,21 +97,115 @@ src/
 ### Vercel (Recommended)
 
 ```bash
-# Connect repo and deploy
+# Deploy in one command
 vercel
 ```
+
+**Status**: ✅ Production-ready and Vercel-optimized
+- Server-side rendering (SSR) enabled
+- Incremental Static Regeneration (ISR) configured
+- Edge caching optimized
+- Environment variables pre-configured
 
 ### Cloudflare Pages
 
 ```bash
-npm run build
+npm run pages:build
 npx wrangler pages deploy .next
+```
+
+## 🏗️ Architecture
+
+### Real-time Data Flow
+1. **Firestore** as single source of truth
+2. **Cloud Functions** (optional) for complex operations
+3. **React Context** for client-side state management
+4. **Real-time Listeners** for live updates across users
+
+### Authentication
+- Anonymous Firebase authentication
+- Optional password gate (`NEXT_PUBLIC_APP_PASS_HASH`)
+- Session persistence via browser storage
+
+### Performance
+- Code splitting per route
+- Image optimization via Next.js Image
+- CSS-in-JS with Tailwind for minimal bundle
+- Lazy loading for heavy components
+
+## 📊 Data Model
+
+### Collections
+- **trips** — Trip metadata (name, dates, location, members)
+- **itinerary** — Daily events with times and descriptions
+- **notes** — Shared collaborative notes
+- **todos** — Task items with completion status
+- **tickets** — Document uploads and metadata
+- **invites** — Temporary invite tokens with expiration
+
+## 🚀 Recent Updates
+
+### v1.0 - Production Release ✨
+- Fixed Vercel deployment issues
+- Resolved hydration mismatches in theme switching
+- Optimized CSS for Tailwind v4 compatibility
+- Enhanced error handling in async operations
+- Improved TypeScript type safety
+
+## 🛣️ Roadmap
+
+- [ ] Drag-and-drop event scheduling
+- [ ] Budget tracking and expense splitting
+- [ ] Weather forecasts for destinations
+- [ ] Photo sharing and albums
+- [ ] Offline mode support
+- [ ] Mobile app (React Native)
+- [ ] Chat/messaging between members
+- [ ] Trip templates and suggestions
+
+## 🐛 Known Issues & Limitations
+
+- Invite links don't expire (can be generated indefinitely)
+- No image compression before upload
+- Google Maps requires valid API key for all users
+- Anonymous auth allows no persistent user profiles
+- No backup/restore functionality
+
+## 🤝 Contributing
+
+Contributions welcome! Here's how:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Setup
+```bash
+# Clone and install
+git clone https://github.com/taylordrew4u2/roadrunner.git
+cd roadrunner
+npm install
+
+# Start dev server
+npm run dev
+
+# Run type check
+npx tsc --noEmit
+
+# Run linter
+npm run lint
 ```
 
 ## 📄 License
 
-MIT
+MIT License - feel free to use this project for personal or commercial purposes
 
 ---
 
-Built with ❤️ for travelers who plan together.
+**Built with ❤️ for travelers who plan together.**
+
+Questions? Open an issue on [GitHub](https://github.com/taylordrew4u2/roadrunner/issues)
+
+Last updated: December 2025
