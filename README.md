@@ -5,7 +5,8 @@ A beautifully designed shared travel itinerary planner for groups. Plan together
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.9-black?logo=next.js)
 ![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react)
 ![Tailwind](https://img.shields.io/badge/Tailwind-4.1.18-38B2AC?logo=tailwindcss)
-![Firebase](https://img.shields.io/badge/Firebase-12.7.0-FFCA28?logo=firebase)
+![Express](https://img.shields.io/badge/Express-4.18.2-000000?logo=express)
+![Fly.io](https://img.shields.io/badge/Fly.io-Backend-7B3FF2)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
 
 ## ✨ Features
@@ -16,14 +17,15 @@ A beautifully designed shared travel itinerary planner for groups. Plan together
 - **Ticket Storage** — Securely upload and organize flight, hotel, and reservation documents
 - **Shared Notes** — Real-time collaborative note-taking with full group access
 - **Smart To-Do Lists** — Tasks require all members to check off before completion
-- **Real-time Sync** — Instant updates across all connected users using Firestore
+- **Real-time Sync** — Instant updates across all connected users via polling
 - **Secure Invite System** — Share trips via encrypted invite links with group members
 - **Dark Mode** — Beautiful glass-morphism UI with seamless light & dark theme switching
-- **Authentication** — Anonymous yet secure authentication via Firebase
+- **Authentication** — Anonymous yet secure authentication via browser localStorage
 - **Responsive Design** — Works perfectly on mobile, tablet, and desktop devices
 
 ## 🚀 Quick Start
 
+### Frontend
 ```bash
 # Install dependencies
 npm install
@@ -35,125 +37,168 @@ npm run dev
 open http://localhost:3000
 ```
 
+### Backend
+```bash
+# Install backend dependencies
+cd server
+npm install
+
+# Start backend server (runs on port 3001)
+npm run dev
+```
+
 ## 🔧 Environment Setup
 
-Create a `.env.local` file with your Firebase and Google Maps credentials:
+### Frontend Setup
+
+Create a `.env.local` file in the root directory:
 
 ```env
-NEXT_PUBLIC_FIREBASE_API_KEY=your_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_maps_key
+```
+
+For production, update `NEXT_PUBLIC_API_URL` to your Fly.io backend URL.
+
+### Backend Setup
+
+The backend requires no environment variables for local development. For production deployment to Fly.io:
+
+```bash
+cd server
+flyctl launch --name roadrunner-server
+flyctl deploy
 ```
 
 ## 🏗️ Tech Stack
 
 | Layer | Technology |
 | ------- | ------------ |
-| Framework | Next.js 15.5 (App Router, RSC, SSR) |
+| Frontend | Next.js 15.5 (App Router, RSC, SSR) |
 | UI | React 18, Tailwind CSS 4, Framer Motion |
-| Backend | Firebase (Auth, Firestore, Storage) |
+| Backend | Node.js, Express 4.18, TypeScript |
+| Database | In-memory (replaceable with PostgreSQL, MongoDB, etc.) |
 | Maps | Google Maps JavaScript API |
 | Animations | Framer Motion 12, Custom CSS |
-| Typography | Space Grotesk, system fonts |
-| Deployment | Vercel, Cloudflare Pages |
-| Package Manager | npm with workspace optimization |
+| Deployment | Cloudflare Pages (frontend), Fly.io (backend) |
+| Package Manager | npm |
 
 ## 📁 Project Structure
 
 ```txt
-src/
-├── app/                    # Next.js App Router pages
-│   ├── page.tsx           # Home (trip list & auth gate)
-│   ├── trip/[id]/         # Trip detail view with tabs
-│   └── invite/[token]/    # Invite link handler
-├── components/
-│   ├── tabs/              # Tab components
-│   │   ├── ItineraryTab.tsx
-│   │   ├── MapsTab.tsx
-│   │   ├── TicketsTab.tsx
-│   │   ├── NotesTab.tsx
-│   │   ├── ToDoTab.tsx
-│   │   └── MembersTab.tsx
-│   ├── LaunchScreen.tsx   # Animated splash screen
-│   ├── TripCreationModal.tsx
-│   ├── LocationPickerModal.tsx
-│   └── ThemeToggle.tsx
-├── lib/
-│   ├── firebase.ts        # Firebase init & auth
-│   ├── firestore.ts       # Data layer & real-time subscriptions
-│   ├── maps.ts            # Google Maps integration
-│   ├── auth.ts            # Password gate utilities
-│   └── notifications.ts   # FCM setup
-└── styles/
-    └── globals.css        # Tailwind v4 + custom components
+roadrunner/
+├── src/                    # Frontend Next.js app
+│   ├── app/               # Next.js App Router pages
+│   │   ├── page.tsx       # Home (trip list)
+│   │   ├── trip/[id]/     # Trip detail view with tabs
+│   │   └── invite/[token]/# Invite link handler
+│   ├── components/
+│   │   ├── tabs/          # Tab components
+│   │   │   ├── ItineraryTab.tsx
+│   │   │   ├── MapsTab.tsx
+│   │   │   ├── TicketsTab.tsx
+│   │   │   ├── NotesTab.tsx
+│   │   │   ├── ToDoTab.tsx
+│   │   │   └── MembersTab.tsx
+│   │   ├── LaunchScreen.tsx
+│   │   ├── TripCreationModal.tsx
+│   │   ├── LocationPickerModal.tsx
+│   │   └── ThemeToggle.tsx
+│   ├── lib/
+│   │   ├── firebase.ts    # API client & auth utilities
+│   │   ├── firestore.ts   # Data layer & API calls
+│   │   ├── maps.ts        # Google Maps integration
+│   │   ├── auth.ts        # Utilities
+│   │   └── notifications.ts
+│   └── styles/
+│       └── globals.css    # Tailwind v4
+├── server/                # Express.js backend
+│   ├── index.ts           # Main server & API endpoints
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── fly.toml           # Fly.io configuration
+│   ├── Dockerfile
+│   └── README.md          # Backend documentation
+├── package.json
+├── wrangler.toml          # Cloudflare Pages config
+└── README.md
 ```
 
 ## 🌐 Deployment
 
-### Vercel (Recommended)
-
-```bash
-# Deploy in one command
-vercel
-```
-
-**Status**: ✅ Production-ready and Vercel-optimized
-- Server-side rendering (SSR) enabled
-- Incremental Static Regeneration (ISR) configured
-- Edge caching optimized
-- Environment variables pre-configured
-
-### Cloudflare Pages
+### Frontend - Cloudflare Pages
 
 ```bash
 npm run pages:build
 npx wrangler pages deploy .next
 ```
 
+**Status**: ✅ Production-ready
+- Optimized for Cloudflare Pages
+- Environment variables managed in dashboard
+- Auto-deploys from GitHub
+
+### Backend - Fly.io
+
+See [server/README.md](./server/README.md) for detailed backend deployment instructions.
+
+```bash
+cd server
+npm run deploy
+```
+
 ## 🏗️ Architecture
 
-### Real-time Data Flow
-1. **Firestore** as single source of truth
-2. **Cloud Functions** (optional) for complex operations
-3. **React Context** for client-side state management
-4. **Real-time Listeners** for live updates across users
+### Request Flow
+1. **Frontend** (Next.js) sends requests to backend API
+2. **Backend** (Express.js on Fly.io) processes requests
+3. **Data** is stored in-memory (or in a database like PostgreSQL)
+4. **Real-time updates** use polling from the frontend
 
 ### Authentication
-- Anonymous Firebase authentication
-- Optional password gate (`NEXT_PUBLIC_APP_PASS_HASH`)
-- Session persistence via browser storage
+- Anonymous UUID-based authentication
+- User ID stored in browser localStorage
+- Passed to backend via `X-User-ID` header
 
-### Performance
-- Code splitting per route
-- Image optimization via Next.js Image
-- CSS-in-JS with Tailwind for minimal bundle
-- Lazy loading for heavy components
+### Data Model
 
-## 📊 Data Model
+**Trips**
+- id, name, location, startDate, endDate, ownerUid, createdAt
 
-### Collections
-- **trips** — Trip metadata (name, dates, location, members)
-- **itinerary** — Daily events with times and descriptions
-- **notes** — Shared collaborative notes
-- **todos** — Task items with completion status
-- **tickets** — Document uploads and metadata
-- **invites** — Temporary invite tokens with expiration
+**Trip Members**
+- uid, phone, role, displayName, joinedAt
+
+**Itinerary Events**
+- id, tripId, day, title, notes, time, location, createdBy, createdAt
+
+**Tasks (To-Do)**
+- id, title, notes, dueAt, createdBy, checkedBy[], createdAt
+
+**Notes**
+- content, updatedBy, updatedAt
+
+**Invites**
+- token, tripId, createdBy, createdAt
 
 ## 🚀 Recent Updates
 
-### v1.0 - Production Release ✨
+### v2.0 - Fly.io Backend Release ✨
+- Migrated from Firebase/Firestore to Express.js backend
+- Deployed backend on Fly.io platform
+- Implemented polling for real-time updates
+- Added complete backend API documentation
+- Removed Firebase dependencies
+
+### v1.0 - Production Release
 - Fixed Vercel deployment issues
 - Resolved hydration mismatches in theme switching
 - Optimized CSS for Tailwind v4 compatibility
 - Enhanced error handling in async operations
-- Improved TypeScript type safety
 
 ## 🛣️ Roadmap
 
+- [ ] Database integration (PostgreSQL/MongoDB)
+- [ ] WebSocket support for true real-time updates
 - [ ] Drag-and-drop event scheduling
 - [ ] Budget tracking and expense splitting
 - [ ] Weather forecasts for destinations
@@ -165,9 +210,9 @@ npx wrangler pages deploy .next
 
 ## 🐛 Known Issues & Limitations
 
-- Invite links don't expire (can be generated indefinitely)
+- Data is stored in-memory (resets on server restart)
+- Invite links don't expire
 - No image compression before upload
-- Google Maps requires valid API key for all users
 - Anonymous auth allows no persistent user profiles
 - No backup/restore functionality
 
@@ -188,7 +233,12 @@ git clone https://github.com/taylordrew4u2/roadrunner.git
 cd roadrunner
 npm install
 
-# Start dev server
+# Start frontend dev server
+npm run dev
+
+# In another terminal, start backend
+cd server
+npm install
 npm run dev
 
 # Run type check

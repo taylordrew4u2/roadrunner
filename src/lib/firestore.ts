@@ -1,25 +1,11 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  onSnapshot,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-  serverTimestamp,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { v4 as uuidv4 } from "uuid";
+import { apiClient, getCurrentUserId } from "@/lib/firebase";
 
 export type Trip = {
   id?: string;
   name: string;
   location: { lat: number; lng: number; address: string } | null;
-  startDate: string; // ISO date
-  endDate: string; // ISO date
+  startDate: string;
+  endDate: string;
   notificationEnabled: boolean;
   ownerUid: string;
   createdAt?: any;
@@ -36,10 +22,10 @@ export type TripMember = {
 export type ItineraryEvent = {
   id?: string;
   tripId: string;
-  day: string; // ISO date for the day
+  day: string;
   title: string;
   notes?: string;
-  time: string; // HH:mm
+  time: string;
   location?: { lat: number; lng: number; address?: string } | null;
   createdBy: string;
   createdAt?: any;
@@ -49,108 +35,178 @@ export type Task = {
   id?: string;
   title: string;
   notes?: string;
-  dueAt?: string; // ISO date/time
+  dueAt?: string;
   createdBy: string;
   createdAt?: any;
+  checkedBy?: string[];
 };
 
 export async function createTrip(trip: Trip) {
-  const col = collection(db, "trips");
-  const ref = await addDoc(col, {
-    ...trip,
-    createdAt: serverTimestamp(),
+  const result = await apiClient.request("/api/trips", {
+    method: "POST",
+    body: JSON.stringify(trip),
   });
-  return ref.id;
+  return result.id;
 }
 
 export function subscribeTrip(tripId: string, cb: (trip: Trip | null) => void) {
-  const ref = doc(db, "trips", tripId);
-  return onSnapshot(ref, (snap) => {
-    if (!snap.exists()) return cb(null);
-    cb({ id: snap.id, ...(snap.data() as Trip) });
-  });
+  apiClient
+    .request(`/api/trips/${tripId}`)
+    .then((trip) => cb(trip))
+    .catch(() => cb(null));
+
+  // Poll for updates
+  const interval = setInterval(() => {
+    apiClient
+      .request(`/api/trips/${tripId}`)
+      .then((trip) => cb(trip))
+      .catch(() => cb(null));
+  }, 2000);
+
+  return () => clearInterval(interval);
 }
 
 export function subscribeTrips(uid: string, cb: (docs: Trip[]) => void) {
-  const col = collection(db, "trips");
-  const q = query(col, where("ownerUid", "==", uid));
-  return onSnapshot(q, (snap) => {
-    const out: Trip[] = [];
-    snap.forEach((d) => out.push({ id: d.id, ...(d.data() as Trip) }));
-    cb(out);
-  });
+  apiClient
+    .request("/api/trips")
+    .then((trips) => cb(trips))
+    .catch(() => cb([]));
+
+  // Poll for updates
+  const interval = setInterval(() => {
+    apiClient
+      .request("/api/trips")
+      .then((trips) => cb(trips))
+      .catch(() => cb([]));
+  }, 2000);
+
+  return () => clearInterval(interval);
 }
 
 export function subscribeTripMembers(tripId: string, cb: (members: TripMember[]) => void) {
-  const col = collection(db, "trips", tripId, "members");
-  return onSnapshot(col, (snap) => {
-    const out: TripMember[] = [];
-    snap.forEach((d) => out.push(d.data() as TripMember));
-    cb(out);
-  });
+  apiClient
+    .request(`/api/trips/${tripId}/members`)
+    .then((members) => cb(members))
+    .catch(() => cb([]));
+
+  // Poll for updates
+  const interval = setInterval(() => {
+    apiClient
+      .request(`/api/trips/${tripId}/members`)
+      .then((members) => cb(members))
+      .catch(() => cb([]));
+  }, 2000);
+
+  return () => clearInterval(interval);
 }
 
 export async function addMember(tripId: string, member: TripMember) {
-  const ref = doc(db, "trips", tripId, "members", member.uid);
-  await setDoc(ref, { ...member, joinedAt: serverTimestamp() });
+  await apiClient.request(`/api/trips/${tripId}/members`, {
+    method: "POST",
+    body: JSON.stringify(member),
+  });
 }
 
 export function subscribeEvents(tripId: string, cb: (events: ItineraryEvent[]) => void) {
-  const col = collection(db, "trips", tripId, "events");
-  return onSnapshot(col, (snap) => {
-    const out: ItineraryEvent[] = [];
-    snap.forEach((d) => out.push({ id: d.id, ...(d.data() as ItineraryEvent) }));
-    cb(out);
-  });
+  apiClient
+    .request(`/api/trips/${tripId}/events`)
+    .then((events) => cb(events))
+    .catch(() => cb([]));
+
+  // Poll for updates
+  const interval = setInterval(() => {
+    apiClient
+      .request(`/api/trips/${tripId}/events`)
+      .then((events) => cb(events))
+      .catch(() => cb([]));
+  }, 2000);
+
+  return () => clearInterval(interval);
 }
 
 export async function addEvent(tripId: string, event: ItineraryEvent) {
-  const col = collection(db, "trips", tripId, "events");
-  await addDoc(col, { ...event, createdAt: serverTimestamp() });
+  await apiClient.request(`/api/trips/${tripId}/events`, {
+    method: "POST",
+    body: JSON.stringify(event),
+  });
 }
 
 export function subscribeTasks(tripId: string, cb: (tasks: Task[]) => void) {
-  const col = collection(db, "trips", tripId, "tasks");
-  return onSnapshot(col, (snap) => {
-    const out: Task[] = [];
-    snap.forEach((d) => out.push({ id: d.id, ...(d.data() as Task) }));
-    cb(out);
-  });
+  apiClient
+    .request(`/api/trips/${tripId}/tasks`)
+    .then((tasks) => cb(tasks))
+    .catch(() => cb([]));
+
+  // Poll for updates
+  const interval = setInterval(() => {
+    apiClient
+      .request(`/api/trips/${tripId}/tasks`)
+      .then((tasks) => cb(tasks))
+      .catch(() => cb([]));
+  }, 2000);
+
+  return () => clearInterval(interval);
 }
 
 export async function addTask(tripId: string, task: Task) {
-  const col = collection(db, "trips", tripId, "tasks");
-  await addDoc(col, { ...task, createdAt: serverTimestamp() });
+  await apiClient.request(`/api/trips/${tripId}/tasks`, {
+    method: "POST",
+    body: JSON.stringify(task),
+  });
 }
 
 export async function toggleTaskCheck(tripId: string, taskId: string, uid: string, checked: boolean) {
-  const ref = doc(db, "trips", tripId, "tasks", taskId, "checks", uid);
-  if (checked) {
-    await setDoc(ref, { checkedAt: serverTimestamp(), uid });
-  } else {
-    await deleteDoc(ref);
-  }
+  await apiClient.request(`/api/trips/${tripId}/tasks/${taskId}/check`, {
+    method: "PATCH",
+    body: JSON.stringify({ checked }),
+  });
 }
 
 export function subscribeTaskChecks(tripId: string, taskId: string, cb: (uids: string[]) => void) {
-  const col = collection(db, "trips", tripId, "tasks", taskId, "checks");
-  return onSnapshot(col, (snap) => {
-    const out: string[] = [];
-    snap.forEach((d) => out.push(d.id));
-    cb(out);
-  });
+  apiClient
+    .request(`/api/trips/${tripId}/tasks`)
+    .then((tasks) => {
+      const task = tasks.find((t) => t.id === taskId);
+      cb(task?.checkedBy || []);
+    })
+    .catch(() => cb([]));
+
+  // Poll for updates
+  const interval = setInterval(() => {
+    apiClient
+      .request(`/api/trips/${tripId}/tasks`)
+      .then((tasks) => {
+        const task = tasks.find((t) => t.id === taskId);
+        cb(task?.checkedBy || []);
+      })
+      .catch(() => cb([]));
+  }, 2000);
+
+  return () => clearInterval(interval);
 }
 
 export async function upsertNotes(tripId: string, content: string, uid: string) {
-  const ref = doc(db, "trips", tripId, "notes", "main");
-  await setDoc(ref, { content, updatedBy: uid, updatedAt: serverTimestamp() }, { merge: true });
+  await apiClient.request(`/api/trips/${tripId}/notes`, {
+    method: "PUT",
+    body: JSON.stringify({ content }),
+  });
 }
 
 export function subscribeNotes(tripId: string, cb: (content: string) => void) {
-  const ref = doc(db, "trips", tripId, "notes", "main");
-  return onSnapshot(ref, (snap) => {
-    cb((snap.data()?.content as string) || "");
-  });
+  apiClient
+    .request(`/api/trips/${tripId}/notes`)
+    .then((data) => cb(data.content || ""))
+    .catch(() => cb(""));
+
+  // Poll for updates
+  const interval = setInterval(() => {
+    apiClient
+      .request(`/api/trips/${tripId}/notes`)
+      .then((data) => cb(data.content || ""))
+      .catch(() => cb(""));
+  }, 2000);
+
+  return () => clearInterval(interval);
 }
 
 // Invites
@@ -162,23 +218,41 @@ export type Invite = {
 };
 
 export async function createInvite(tripId: string, createdBy: string) {
-  const token = uuidv4();
-  const ref = doc(db, "invites", token);
-  await setDoc(ref, { token, tripId, createdBy, createdAt: serverTimestamp() });
-  return token;
+  const result = await apiClient.request(`/api/trips/${tripId}/invites`, {
+    method: "POST",
+  });
+  return result.token;
 }
 
 export async function getInvite(token: string): Promise<string | null> {
-  const ref = doc(db, "invites", token);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) return null;
-  return snap.data().tripId;
+  try {
+    const invite = await apiClient.request(`/api/invites/${token}`);
+    return invite.tripId;
+  } catch {
+    return null;
+  }
 }
 
 export function subscribeInvite(token: string, cb: (invite: Invite | null) => void) {
-  const ref = doc(db, "invites", token);
-  return onSnapshot(ref, (snap) => {
-    if (!snap.exists()) return cb(null);
-    cb(snap.data() as Invite);
+  apiClient
+    .request(`/api/invites/${token}`)
+    .then((invite) => cb(invite))
+    .catch(() => cb(null));
+
+  // Poll for updates
+  const interval = setInterval(() => {
+    apiClient
+      .request(`/api/invites/${token}`)
+      .then((invite) => cb(invite))
+      .catch(() => cb(null));
+  }, 2000);
+
+  return () => clearInterval(interval);
+}
+
+export async function joinTripViaInvite(token: string) {
+  const result = await apiClient.request(`/api/invites/${token}/join`, {
+    method: "POST",
   });
+  return result.tripId;
 }
